@@ -1,6 +1,6 @@
 # config-yml - Simple Yaml Config for Node.js
 
-![Travis Build](https://travis-ci.org/Nordstrom/config.svg)
+[![Travis Build](https://travis-ci.org/Nordstrom/config.svg)](https://travis-ci.org/Nordstrom/config) [![bitHound Overall Score](https://www.bithound.io/github/Nordstrom/config/badges/score.svg)](https://www.bithound.io/github/Nordstrom/config)
 
 ## Install
 ```
