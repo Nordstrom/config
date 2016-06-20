@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha"
   },
+  "engines": {
+    "npm": "~3.9.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Nordstrom/config.git"
