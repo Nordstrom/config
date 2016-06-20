@@ -15,7 +15,6 @@ var _ = require('lodash'),
     environments = config.environments || {},
     envId = getEnvId(),
     ENVID = envId ? envId.toUpperCase() : undefined,
-    context = getExecutionContext(),
     environmentType = (_.includes(environments.static, envId) ? envId : undefined) || environments.default;
 
 function loadConfig() {
@@ -74,7 +73,6 @@ config = _.merge(
     {},
     config || {},
     config[environmentType] || {},
-    config[context] || {},
     {
         envId: envId,
         ENVID: ENVID,
@@ -107,7 +105,7 @@ function transform(obj) {
 }
 
 function log() {
-    console.log('CONFIG:', envId || '-', context || '-', environmentType || '-');
+    console.log('CONFIG:', envId || '-', environmentType || '-');
 }
 
 module.exports = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
