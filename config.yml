@@ -1,17 +1,27 @@
 
-lower: ${envId}
-upper: ${ENVID}
-token: token-${timestamp}
+foo: fooval
 
-obj1:
-  obj2:
-    lower: ${envId}
-    upper: ${ENVID}
-    token: token-${timestamp}
+bar:
+  foo: barfooval
 
+  nested:
+    foo:
+      bar: nestedfoobarval
 
+sub:
+  foo: ${foo} - ${bar.foo}
+  bar:
+    foo: ${bar.foo}
+    nested: ${bar.nested.foo.bar}
 
-list1:
-  - ${envId}
-  - ${ENVID}
-  - token-${timestamp}
+sub2:
+  foo: ${sub.foo}
+  bar:
+    foo: ${sub.bar.foo}
+    nested: ${sub.bar.nested}
+
+sub3:
+  foo: ${sub2.foo}
+  bar:
+    foo: ${sub2.bar.foo}
+    nested: ${sub2.bar.nested}

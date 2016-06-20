@@ -4,30 +4,28 @@ var should = require('should'),
     moment = require('moment'),
     _load = require('./_load.js');
 
-describe('Config env with default override', function () {
-    var config,
-        env;
+describe('Config with substitution', function () {
+    var config;
 
     before(function () {
-        env = 'unknown';
-        process.env.ENVIRONMENT_ID = env;
-        config = _load('env');
+        config = _load('substitution');
     });
 
-    it('should override env variables at top', function () {
-        config.setting1.should.equal('dummyVal');
+    it('should substitute at 1st level', function () {
+        config.sub.foo.should.equal('fooval - barfooval');
+        config.sub.bar.foo.should.equal('barfooval');
+        config.sub.bar.nested.should.equal('nestedfoobarval');
     });
 
-    it('should override env variables in obj', function () {
-        config.obj1.obj2.setting1.should.equal('objsettingVal1');
+    it('should substitute at 2nd level', function () {
+        config.sub2.foo.should.equal('fooval - barfooval');
+        config.sub2.bar.foo.should.equal('barfooval');
+        config.sub2.bar.nested.should.equal('nestedfoobarval');
     });
 
-    it('should override env variables in list', function () {
-        config.settingList1.should.have.length(2);
-        config.settingList1[0].should.equal('one');
+    it('should substitute at 1st level', function () {
+        config.sub3.foo.should.equal('fooval - barfooval');
+        config.sub3.bar.foo.should.equal('barfooval');
+        config.sub3.bar.nested.should.equal('nestedfoobarval');
     });
-
-    after(function(){
-        delete process.env.ENVIRONMENT_ID;
-    })
 });

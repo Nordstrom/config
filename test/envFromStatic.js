@@ -4,14 +4,13 @@ var should = require('should'),
     moment = require('moment'),
     _load = require('./_load.js');
 
-describe('Config env from arg', function () {
+describe('Config env from static', function () {
     var config,
         env;
 
     before(function () {
-        env = 'argenv';
-        process.argv.push('--env');
-        process.argv.push(env);
+        env = 'dummy';
+        process.argv.push('--dummy');
         config = _load('env');
     });
 
@@ -31,7 +30,6 @@ describe('Config env from arg', function () {
     });
 
     after(function(){
-        process.argv.pop();
         process.argv.pop();
     })
 });

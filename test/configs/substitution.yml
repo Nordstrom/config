@@ -1,44 +1,27 @@
 
-lower: ${envId}
-upper: ${ENVID}
-token: token-${timestamp}
+foo: fooval
 
-obj1:
-  obj2:
-    lower: ${envId}
-    upper: ${ENVID}
-    token: token-${timestamp}
-    setting1: objsettingVal1
+bar:
+  foo: barfooval
 
+  nested:
+    foo:
+      bar: nestedfoobarval
 
-setting1: settingVal
+sub:
+  foo: ${foo} - ${bar.foo}
+  bar:
+    foo: ${bar.foo}
+    nested: ${bar.nested.foo.bar}
 
-list1:
-  - ${envId}
-  - ${ENVID}
-  - token-${timestamp}
+sub2:
+  foo: ${sub.foo}
+  bar:
+    foo: ${sub.bar.foo}
+    nested: ${sub.bar.nested}
 
-settingList1:
-  - one
-  - two
-
-environments:
-  static:
-    - test
-    - dummy
-
-  default: dummy
-
-
-dummy:
-  setting1: dummyVal
-
-test:
-  setting1: overrideVal
-
-  settingList1:
-    - listoverrideVal
-
-  obj1:
-    obj2:
-      setting1: objoverrideVal
+sub3:
+  foo: ${sub2.foo}
+  bar:
+    foo: ${sub2.bar.foo}
+    nested: ${sub2.bar.nested}

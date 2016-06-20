@@ -1,34 +1,35 @@
-# cfn - Simple Cloud Formation for Node.js
-
-![CircleCI](https://circleci.com/gh/Nordstrom/cfn.svg?style=shield)
+# config - Simple Yaml Config for Node.js
 
 ## Install
 ```
-$ npm install cfn --save-dev
+$ npm install config --save
 ```
 
-## Usage
+## Get Started
 
-Use cfn to create or update a Cloud Formation stack.  It returns a promise.  You can use Node.js modules or standard 
-json for Cloud Formation Templates.
+Use config for yaml config files in Node.js projects.  For example you might have a project with the following 
+config.yml file in the project dir.
+
+```yaml
+
+app:
+    url: http://myapp.com/home
+    cache: redis
+    
+db:
+    location: mysql-db-prod
+    
+```
+
+This config can be accessed like this.
 
 ```javascript
 
-var cfn = require('cfn');
+var config = require('config');
 
+console.log(config.app.url);
+console.log(config.app.cache);
+console.log(config.db.location);
 
-// Create or update (if it exists) the Foo-Bar stack with the template.js Node.js module.
-cfn('Foo-Bar', __dirname + '/template.js')
-    .then(function() {
-        console.log('done');
-    });
-    
-// Create or update the Foo-Bar stack with the template.json json template.
-cfn('Foo-Bar', 'template.json');
-
-// Delete the Foo-Bar stack
-cfn.delete('Foo-Bar');
-
-```
-    
+```    
     

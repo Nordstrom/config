@@ -1,12 +1,16 @@
 'use strict';
 
 var _ = require('lodash'),
+    flow = require('lodash/fp/flow'),
+    head = require('lodash/fp/head'),
+    pick = require('lodash/fp/pick'),
+    keys = require('lodash/fp/keys'),
     fs = require('fs'),
     sh = require('shelljs'),
     yaml = require('js-yaml'),
     moment = require('moment'),
     args = require('yargs').argv,
-    timestamp = moment().format('YYYYMMHHmmss'),
+    timestamp = moment().format('YYYYMMDDHHmmss'),
     config = loadConfig(),
     environments = config.environments || {},
     envId = getEnvId(),
@@ -28,17 +32,17 @@ function loadConfig() {
 
 function getEnvIdFromBranch() {
     try {
-        var branch = sh.exec('git rev-parse --abbrev-ref HEAD', { silent: true }).stdout;
+        var branch = sh.exec('git status', { silent: true }).stdout;
 
         if (!branch || _.includes(branch, 'fatal:')) {
             return;
         }
 
-        branch = branch
-            .toString()
-            .trim()
-            .replace(new RegExp(config.branchPrefix), '')
-            .replace(/\w+\//, '');
+        branch = branch.split('\n')[0].replace(/^On branch ([\w-_/.]+)/, '$1');
+
+        if (config.branchRegex) {
+            branch = branch.replace(new RegExp(config.branchPrefix), '$1');
+        }
 
         return _.trimEnd(_.truncate(branch, {
             length: 13,
@@ -53,7 +57,11 @@ function getEnvIdFromBranch() {
 
 function getEnvId() {
     return args.env ||
-        _.head(_.pick(args, (config.environments || {}).static)) ||
+        flow(
+            pick((config.environments || {}).static),
+            keys,
+            head
+        )(args) ||
         process.env.ENVIRONMENT_ID ||
         getEnvIdFromBranch();
 }
@@ -74,15 +82,26 @@ config = _.merge(
         timestamp: timestamp
     });
 
+function substitute(p) {
+    return p.replace(/\$\{([\w\.\-]+)\}/g, function (match, term) {
+        return _.get(config, term) || match;
+    });
+}
+
 function transform(obj) {
     return _.mapValues(obj, function (p) {
         if (_.isPlainObject(p)) {
             return transform(p);
         }
         if (_.isString(p)) {
-            return p.replace(/\$\{([\w\.\-]+)\}/g, function (match, term) {
-                return _.get(config, term) || match;
-            });
+            return substitute(p);
+        }
+        if (_.isArray(p)) {
+            for (var i = 0; i < p.length; i++) {
+                if (_.isString(p[i])) {
+                    p[i] = substitute(p[i]);
+                }
+            }
         }
         return p;
     });
