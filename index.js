@@ -106,4 +106,4 @@ function log() {
 }
 
 module.exports = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
-module.log = log;
+module.exports.log = log;
