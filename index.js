@@ -41,7 +41,7 @@ function getEnvIdFromBranch() {
         branch = branch.split('\n')[0].replace(/^On branch ([\w-_/.]+)/, '$1');
 
         if (config.branchRegex) {
-            branch = branch.replace(new RegExp(config.branchPrefix), '$1');
+            branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1');
         }
 
         return _.trimEnd(_.truncate(branch, {
