@@ -38,10 +38,14 @@ function getEnvIdFromBranch() {
             return;
         }
 
-        branch = branch.split('\n')[0].replace(/^#?\s?On branch ([\w-_/.]+)/, '$1');
+        branch = branch.split('\n')[0];
+        console.log(branch);
+        branch = branch.replace(/^#?\s?On branch ([\w-_/.]+)/, '$1');
+        console.log(branch);
 
         if (config.branchRegex) {
             branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1');
+            console.log(branch);
         }
 
         return _.trimEnd(_.truncate(branch, {
@@ -66,11 +70,6 @@ function getEnvId() {
         getEnvIdFromBranch();
 }
 
-function getExecutionContext() {
-    return (global.EXECUTION_CONTEXT || process.env.EXECUTION_CONTEXT || '').toLowerCase() ||
-        _.head(_.pick(args, config.executionContexts));
-}
-
 config = _.merge(
     {},
     config || {},
@@ -83,7 +82,7 @@ config = _.merge(
     });
 
 function substitute(p) {
-    return p.replace(/\$\{([\w\.\-]+)\}/g, function (match, term) {
+    return p.replace(/\$\{([\w\.\-]+)}/g, function (match, term) {
         return _.get(config, term) || match;
     });
 }
@@ -112,5 +111,4 @@ function log() {
 }
 
 module.exports = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
-module.getExecutionContext = getExecutionContext;
 module.log = log;

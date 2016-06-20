@@ -19,9 +19,12 @@ describe('Config env from branch with regex', function () {
         timestamp = moment().format('YYYYMMDDHHmmss');
         config = _load('env-w-regex');
         env = sh.exec('git status', { silent: true }).stdout;
+        env = env.split('\n')[0]
         console.log(env);
-        env = env ? env.split('\n')[0].replace(/^#?\s?On branch ([\w-_/.]+)/, '$1') : undefined;
+        env = env.replace(/^#?\s?On branch ([\w-_/.]+)/, '$1');
+        console.log(env);
         env = env.replace(/\w(\w+)\w/, '$1');
+        console.log(env);
 
         env = env ? _.truncate(env, {
             length: 13,
