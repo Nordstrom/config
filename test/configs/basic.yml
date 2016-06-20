@@ -1,0 +1,12 @@
+
+var1: val1
+var2: val2
+
+obj1:
+  var1: objval1
+  var2: objval2
+
+
+list1:
+  - listval1
+  - listval2

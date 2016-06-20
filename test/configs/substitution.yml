@@ -1,0 +1,44 @@
+
+lower: ${envId}
+upper: ${ENVID}
+token: token-${timestamp}
+
+obj1:
+  obj2:
+    lower: ${envId}
+    upper: ${ENVID}
+    token: token-${timestamp}
+    setting1: objsettingVal1
+
+
+setting1: settingVal
+
+list1:
+  - ${envId}
+  - ${ENVID}
+  - token-${timestamp}
+
+settingList1:
+  - one
+  - two
+
+environments:
+  static:
+    - test
+    - dummy
+
+  default: dummy
+
+
+dummy:
+  setting1: dummyVal
+
+test:
+  setting1: overrideVal
+
+  settingList1:
+    - listoverrideVal
+
+  obj1:
+    obj2:
+      setting1: objoverrideVal

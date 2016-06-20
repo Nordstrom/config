@@ -1,0 +1,43 @@
+{
+  "name": "config",
+  "version": "0.1.0",
+  "description": "Simple Yaml Config for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nordstrom/config.git"
+  },
+  "keywords": [
+    "Config",
+    "Yaml",
+    "Yml",
+    "Configuration",
+    "Settings",
+    "Parameters",
+    "Node.js",
+    "Stack",
+    "Deploy"
+  ],
+  "author": "Andy Day",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nordstrom/config/issues"
+  },
+  "homepage": "https://github.com/Nordstrom/config#readme",
+  "dependencies": {
+    "js-yaml": "^3.6.1",
+    "lodash": "^4.13.1",
+    "moment": "^2.13.0",
+    "shelljs": "^0.7.0",
+    "yargs": "^4.7.1"
+  },
+  "devDependencies": {
+    "decache": "^3.1.0",
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
+    "sinon": "^1.17.4"
+  }
+}
