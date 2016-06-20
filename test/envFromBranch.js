@@ -1,6 +1,7 @@
 'use strict';
 
-var should = require('should'),
+var _ = require('lodash'),
+    should = require('should'),
     sh = require('shelljs'),
     sinon = require('sinon'),
     moment = require('moment'),
@@ -19,6 +20,11 @@ describe('Config env from branch', function () {
         config = _load('env');
         env = sh.exec('git status', { silent: true }).stdout;
         env = env ? env.split('\n')[0].replace(/^On branch ([\w-_/.]+)/, '$1') : undefined;
+
+        env = env ? _.truncate(env, {
+            length: 13,
+            omission: ''
+        }) : undefined;
     });
 
     it('should have env variables at top', function () {
