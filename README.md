@@ -1,10 +1,10 @@
-# config - Simple Yaml Config for Node.js
+# config-yml - Simple Yaml Config for Node.js
 
 ![Travis Build](https://travis-ci.org/Nordstrom/config.svg)
 
 ## Install
 ```
-$ npm install config --save
+$ npm install config-yml --save
 ```
 
 ## Get Started
@@ -27,7 +27,7 @@ This config can be accessed like this.
 
 ```javascript
 
-var config = require('config');
+var config = require('config-yml');
 
 console.log(config.app.url);
 console.log(config.app.cache);

@@ -1,6 +1,6 @@
 {
-  "name": "config",
-  "version": "0.1.0",
+  "name": "config-yml",
+  "version": "0.2.0",
   "description": "Simple Yaml Config for Node.js",
   "main": "index.js",
   "scripts": {
