@@ -1,5 +1,7 @@
 # config - Simple Yaml Config for Node.js
 
+![Travis Build](https://travis-ci.org/Nordstrom/config.svg)
+
 ## Install
 ```
 $ npm install config --save
