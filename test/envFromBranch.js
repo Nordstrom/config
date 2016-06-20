@@ -2,10 +2,10 @@
 
 var _ = require('lodash'),
     should = require('should'),
-    sh = require('shelljs'),
     sinon = require('sinon'),
     moment = require('moment'),
     decache = require('decache'),
+    _env = require('./_env.js'),
     _load = require('./_load.js');
 
 describe('Config env from branch', function () {
@@ -18,13 +18,7 @@ describe('Config env from branch', function () {
         clock = sinon.useFakeTimers();
         timestamp = moment().format('YYYYMMDDHHmmss');
         config = _load('env');
-        env = sh.exec('git status', { silent: true }).stdout;
-        env = env ? env.split('\n')[0].replace(/^On branch ([\w-_/.]+)/, '$1') : undefined;
-
-        env = env ? _.truncate(env, {
-            length: 13,
-            omission: ''
-        }) : undefined;
+        env = _env();
     });
 
     it('should have env variables at top', function () {

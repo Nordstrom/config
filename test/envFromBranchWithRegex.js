@@ -6,6 +6,7 @@ var _ = require('lodash'),
     sinon = require('sinon'),
     moment = require('moment'),
     decache = require('decache'),
+    _env = require('./_env.js'),
     _load = require('./_load.js');
 
 describe('Config env from branch with regex', function () {
@@ -18,18 +19,7 @@ describe('Config env from branch with regex', function () {
         clock = sinon.useFakeTimers();
         timestamp = moment().format('YYYYMMDDHHmmss');
         config = _load('env-w-regex');
-        env = sh.exec('git status', { silent: true }).stdout;
-        env = env.split('\n')[0]
-        console.log(env);
-        env = env.replace(/^#?\s?On branch ([\w-_/.]+)/, '$1');
-        console.log(env);
-        env = env.replace(/\w(\w+)\w/, '$1');
-        console.log(env);
-
-        env = env ? _.truncate(env, {
-            length: 13,
-            omission: ''
-        }) : undefined;
+        env = _env(true);
     });
 
     it('should have env variables at top', function () {
