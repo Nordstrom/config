@@ -105,5 +105,26 @@ function log() {
     console.log('CONFIG:', envId || '-', environmentType || '-');
 }
 
-module.exports = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
+function requireSettings(settings) {
+    var erredSettings = [];
+    settings = _.isString(settings) ? [settings] : settings;
+    _.forEach(settings, function(setting){
+        if (!_.has(config, setting)) {
+            erredSettings.push(setting);
+        }
+    });
+
+    if (erredSettings.length > 1) {
+        throw new Error('The following settings are required in config.yml: ' + erredSettings.join('; '));
+    }
+
+    if (erredSettings.length === 1) {
+        throw new Error(erredSettings[0] + ' is required in config.yml');
+    }
+}
+
+config = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
+
+module.exports = config;
 module.exports.log = log;
+module.exports.require = requireSettings;

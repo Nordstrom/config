@@ -59,3 +59,148 @@ console.log(config.app.url);
 // outputs - http://myapp.com/home
 
 ```
+
+## Environment Specific Settings
+Based on an Environment ID, you can designate specific override settings for different types of environments.  First
+you have to specify your Environment ID.  You can do so in one of several ways.  The first Environment ID that is
+found in the following order wins.
+
+1. [--env command line argument](#Environment-ID:---env-Argument)
+2. [--${static-environment} command line argument](#Environment-ID:---${static-environment}-Argument)
+3. [ENVIRONMENT_ID process environment setting](#Environment-ID:-ENVIRONMENT_ID) 
+4. [git branch name with regex filtering](#Environment-ID:-git-branch)
+
+### Static Environments
+To understand this better let's first talk about Static Environments.  These are environments that have their own 
+environment specific settings or [Environment Overrides](#Environment-Overrides).  Not necessarily all environments 
+have their own environment specific settings, but those that do should be defined as Static Environments in
+the config.yml as follows:
+
+```yaml
+
+environments:
+    static:
+        - dev
+        - test
+        - prod
+       
+```
+
+
+### Environment ID: --env Argument
+Set the Environment ID using --env command line argument.
+
+```
+node app.js --env feature-xyz
+```
+
+This is often helpful when running gulp tasks.
+
+```
+gulp deploy --env feature-xyz
+```
+
+### Environment ID: --${static-environment} Argument
+For Static Environments set the Environment ID using the static environment id as an argument.
+
+```
+gulp deploy --prod
+```
+
+### Environment ID: ENVIRONMENT_ID
+Set the Environment ID using ENVIRONMENT_ID process environment variable.
+
+```
+export ENVIRONMENT_ID=feature-xyz
+```
+
+### Environment ID: git branch
+If an Environment ID is not found using one of the other methods, it will use the git branch for the current project
+folder.  This branch can be filtered using regex.  Let's say your current branch is `Features/ISSUE-123-feature-xyz`, 
+and you have the following setting in your config.yml.
+
+```yaml
+
+branchRegex: Features/ISSUE-\d+-((\w|-)+)
+
+```
+
+The Environment ID will be `feature-zyz`.  If no branchRegex is given the branch name will be taken as is.
+
+
+### Environment ID Substitution
+The Environment ID can be substituted into the config.yml.  Let's say you have an Environment ID `feature-xyz` and
+the following config.yml.
+
+```yaml
+dns: ${envId}.myapp.com
+
+app:
+    url: http://${dns}/home
+    cache: redis
+    
+db:
+    location: MYSQL-DB-${ENVID}
+```
+
+This will yield the following:
+
+```javascript
+var config = require('config-yml');
+
+console.log(config.dns);          // feature-xyz.myapp.com
+console.log(config.app.url);      // http://feature-xyz.myapp.com
+console.log(config.db.location);  // MYSQL-DB-FEATURE-XYZ
+
+```
+
+### Environment Overrides
+
+For Static Environments, settings can be overridden for that specific environment.  For example, with the following
+config.yml:
+
+```yaml
+dns: ${envId}.myapp.com
+
+app:
+    url: http://${dns}/home
+    cache: redis
+    
+db:
+    location: MYSQL-DB-${ENVID}
+
+prod:
+    app:
+        url: https://${dns}
+    db:
+        location: DB-${ENVID}
+        
+```
+
+and the following app.js file:
+
+
+```javascript
+var config = require('config-yml');
+
+console.log(config.dns);
+console.log(config.app.url);
+console.log(config.app.cache);
+console.log(config.db.location);
+
+```
+
+the following command:
+
+```
+node app.js --prod
+```
+
+would output the following:
+
+```
+prod.myapp.com
+https://prod.myapp.com
+redis
+MYSQL-DB-PROD
+```
