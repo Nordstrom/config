@@ -21,10 +21,15 @@ function loadConfig() {
     try {
         return yaml.load(fs.readFileSync('config.yml', 'utf8'));
     } catch (e) {
+        if (!/ENOENT:\s+no such file or directory/.test(e)) {
+            console.log('Error Loading config.yml:', e);
+            throw e;
+        }
         try {
             return yaml.load(fs.readFileSync('../config.yml', 'utf8'));
         } catch (e) {
-            return {};
+            console.log('Error Loading config.yml:', e);
+            throw e;
         }
     }
 }
@@ -65,6 +70,8 @@ function getEnvId() {
         process.env.ENVIRONMENT_ID ||
         getEnvIdFromBranch();
 }
+
+console.log(JSON.stringify(config, null, 2));
 
 config = _.merge(
     {},
@@ -108,7 +115,7 @@ function log() {
 function requireSettings(settings) {
     var erredSettings = [];
     settings = _.isString(settings) ? [settings] : settings;
-    _.forEach(settings, function(setting){
+    _.forEach(settings, function (setting) {
         if (!_.has(config, setting)) {
             erredSettings.push(setting);
         }
