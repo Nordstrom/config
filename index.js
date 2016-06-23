@@ -71,8 +71,6 @@ function getEnvId() {
         getEnvIdFromBranch();
 }
 
-console.log(JSON.stringify(config, null, 2));
-
 config = _.merge(
     {},
     config || {},
