@@ -25,3 +25,10 @@ sub3:
   bar:
     foo: ${sub2.bar.foo}
     nested: ${sub2.bar.nested}
+
+sub4:
+  foo: ${sub3.foo}
+  bar:
+    foo: ${sub3.bar.foo}
+
+sub5: ${nonexistant.value}
