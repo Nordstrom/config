@@ -1,14 +1,18 @@
 # config-yml - Simple Yaml Config for Node.js
 
-[![Travis Build](https://travis-ci.org/Nordstrom/config.svg)](https://travis-ci.org/Nordstrom/config) [![bitHound Overall Score](https://www.bithound.io/github/Nordstrom/config/badges/score.svg)](https://www.bithound.io/github/Nordstrom/config)
+[![Travis Build](https://travis-ci.org/Nordstrom/config.svg)](https://travis-ci.org/Nordstrom/config) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![config-yml](https://img.shields.io/npm/v/config-yml.svg)](https://www.npmjs.com/package/config-yml)
 
 ## Install
+```
+$ yarn add config-yml
+```
+or
 ```
 $ npm install config-yml --save
 ```
 
 ## Usage
-Use config for yaml config files in Node.js projects.  For example you might have a project with the following 
+Use config for yaml config files in Node.js projects.  For example you might have a project with the following
 config.yml file in the project dir.
 
 ```yaml
@@ -16,10 +20,10 @@ config.yml file in the project dir.
 app:
     url: http://myapp.com/home
     cache: redis
-    
+
 db:
     location: mysql-db-prod
-    
+
 ```
 
 This config can be accessed like this.
@@ -44,7 +48,7 @@ dns: myapp.com
 app:
     url: http://${dns}/home
     cache: redis
-    
+
 db:
     location: mysql-db-prod
 
@@ -67,12 +71,12 @@ found in the following order wins.
 
 1. [--env command line argument](#Environment-ID:---env-Argument)
 2. [--${static-environment} command line argument](#Environment-ID:---${static-environment}-Argument)
-3. [ENVIRONMENT_ID process environment setting](#Environment-ID:-ENVIRONMENT_ID) 
+3. [ENVIRONMENT_ID process environment setting](#Environment-ID:-ENVIRONMENT_ID)
 4. [git branch name with regex filtering](#Environment-ID:-git-branch)
 
 ### Static Environments
-To understand this better let's first talk about Static Environments.  These are environments that have their own 
-environment specific settings or [Environment Overrides](#Environment-Overrides).  Not necessarily all environments 
+To understand this better let's first talk about Static Environments.  These are environments that have their own
+environment specific settings or [Environment Overrides](#Environment-Overrides).  Not necessarily all environments
 have their own environment specific settings, but those that do should be defined as Static Environments in
 the config.yml as follows:
 
@@ -83,7 +87,7 @@ environments:
         - dev
         - test
         - prod
-       
+
 ```
 
 
@@ -116,7 +120,7 @@ export ENVIRONMENT_ID=feature-xyz
 
 ### Environment ID: git branch
 If an Environment ID is not found using one of the other methods, it will use the git branch for the current project
-folder.  This branch can be filtered using regex.  Let's say your current branch is `Features/ISSUE-123-feature-xyz`, 
+folder.  This branch can be filtered using regex.  Let's say your current branch is `Features/ISSUE-123-feature-xyz`,
 and you have the following setting in your config.yml.
 
 ```yaml
@@ -138,7 +142,7 @@ dns: ${envId}.myapp.com
 app:
     url: http://${dns}/home
     cache: redis
-    
+
 db:
     location: MYSQL-DB-${ENVID}
 ```
@@ -165,7 +169,7 @@ dns: ${envId}.myapp.com
 app:
     url: http://${dns}/home
     cache: redis
-    
+
 db:
     location: MYSQL-DB-${ENVID}
 
@@ -174,7 +178,7 @@ prod:
         url: https://${dns}
     db:
         location: DB-${ENVID}
-        
+
 ```
 
 and the following app.js file:
