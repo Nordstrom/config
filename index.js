@@ -111,6 +111,10 @@ function transform (obj) {
   return {changed: changed, result: resultant}
 }
 
+function log () {
+  console.log('CONFIG:', envId || '-', environmentType || '-')
+}
+
 function requireSettings (settings) {
   var erredSettings = []
   settings = _.isString(settings) ? [settings] : settings
