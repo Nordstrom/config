@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "standard | snazzy && mocha",
+    "coverage": "nyc --reporter=lcov --reporter=text mocha",
     "coveralls": "nyc --reporter=text-lcov mocha | coveralls"
   },
   "repository": {

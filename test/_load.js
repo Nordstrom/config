@@ -7,7 +7,7 @@ const decache = require('decache')
 module.exports = function (name) {
   decache('js-yaml')
   decache('yargs')
-  decache('../')
+  // decache('../')
   delete require.cache[require.resolve('../')]
   sh.cp('-f', path.join(__dirname, 'configs', name + '.yml'), 'config.yml')
 
