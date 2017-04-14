@@ -71,39 +71,44 @@ function getEnvId() {
         getEnvIdFromBranch();
 }
 
-config = _.merge(
-    {},
-    config || {},
-    config[environmentType] || {},
-    {
-        envId: envId,
-        ENVID: ENVID,
-        timestamp: timestamp
-    });
-
 function substitute(p) {
-    return p.replace(/\$\{([\w\.\-]+)}/g, function (match, term) {
+    var success = false;
+    var replaced = p.replace(/\$\{([\w\.\-]+)}/g, function (match, term) {
+        if (!success) {
+            success = _.has(config, term);
+        }
         return _.get(config, term) || match;
     });
+    return {success : success, replace : replaced};
 }
 
 function transform(obj) {
-    return _.mapValues(obj, function (p) {
+    var changed = false;
+    var resultant =_.mapValues(obj, function (p) {
         if (_.isPlainObject(p)) {
-            return transform(p);
+            var transformed = transform(p);
+            if(!changed && transformed.changed){
+                changed = true;
+            }
+            return transformed.result;
         }
         if (_.isString(p)) {
-            return substitute(p);
+            var subbed = substitute(p);
+            if(!changed && subbed.success){
+                changed = true;
+            }
+            return subbed.replace;
         }
         if (_.isArray(p)) {
             for (var i = 0; i < p.length; i++) {
                 if (_.isString(p[i])) {
-                    p[i] = substitute(p[i]);
+                    p[i] = substitute(p[i]).replace;
                 }
             }
         }
         return p;
     });
+    return {changed : changed, result : resultant};
 }
 
 function log() {
@@ -128,7 +133,23 @@ function requireSettings(settings) {
     }
 }
 
-config = transform(transform(transform(config)));  // transform 3 times to allow 3 levels of vars
+config = _.merge(
+    {},
+    config || {},
+    config[environmentType] || {},
+    {
+        envId: envId,
+        ENVID: ENVID,
+        timestamp: timestamp
+});
+
+var altered = false;
+var temp;
+do {
+    temp = transform(config);
+    config = temp.result;
+    altered = temp.changed;
+} while (altered);
 
 module.exports = config;
 module.exports.log = log;

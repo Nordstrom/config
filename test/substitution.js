@@ -23,9 +23,18 @@ describe('Config with substitution', function () {
         config.sub2.bar.nested.should.equal('nestedfoobarval');
     });
 
-    it('should substitute at 1st level', function () {
+    it('should substitute at 3rd level', function () {
         config.sub3.foo.should.equal('fooval - barfooval');
         config.sub3.bar.foo.should.equal('barfooval');
         config.sub3.bar.nested.should.equal('nestedfoobarval');
+    });
+
+    it('should substitute beyond 3rd level', function () {
+        config.sub4.foo.should.equal('fooval - barfooval');
+        config.sub4.bar.foo.should.equal('barfooval');
+    });
+
+    it('should not endlessly attempt to parse a nonexistant value', function () {
+        config.sub5.should.equal('${nonexistant.value}');
     });
 });
