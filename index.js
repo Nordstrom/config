@@ -144,9 +144,8 @@ config = _.merge(
 });
 
 var altered = false;
-var temp;
 do {
-    temp = transform(config);
+    var temp = transform(config);
     config = temp.result;
     altered = temp.changed;
 } while (altered);
