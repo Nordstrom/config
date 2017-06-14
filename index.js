@@ -11,25 +11,32 @@ const yaml = require('js-yaml')
 const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
-
-let config = loadConfig()
+let singleFileMode = true
+let config = {}
+config = determineConfigMode()
 let environments = config.environments || {}
 let envId = getEnvId()
 let ENVID = envId ? envId.toUpperCase() : undefined
 let environmentType = (_.includes(environments.static, envId) ? envId : undefined) || environments.default
 
-function loadConfig () {
+function determineConfigMode () {
+  if (fs.existsSync('config.yml')) {
+    return loadConfig('config.yml')
+  }
+
+  singleFileMode = false
+  return _.merge({},
+        loadConfig('config/defaults.config.yml'),
+        loadConfig('config/' + getEnvId() + '.config.yml')
+    )
+}
+
+function loadConfig (file) {
   try {
-    return yaml.load(fs.readFileSync('config.yml', 'utf8'))
+    return yaml.load(fs.readFileSync(file, 'utf8'))
   } catch (e) {
     if (!/ENOENT:\s+no such file or directory/.test(e)) {
-      console.log('Error Loading config.yml:', e)
-      throw e
-    }
-    try {
-      return yaml.load(fs.readFileSync('../config.yml', 'utf8'))
-    } catch (e) {
-      console.log('Error Loading config.yml:', e)
+      console.log('Error Loading ' + file + ':', e)
       throw e
     }
   }
@@ -37,7 +44,9 @@ function loadConfig () {
 
 function getEnvIdFromBranch () {
   try {
-    var branch = sh.exec('git status', { silent: true }).stdout
+    var branch = sh.exec('git status', {
+      silent: true
+    }).stdout
 
     if (!branch || _.includes(branch, 'fatal:')) {
       return
@@ -46,7 +55,7 @@ function getEnvIdFromBranch () {
     branch = branch.split('\n')[0]
     branch = branch.replace(/^#?\s?On branch ((\w|-|_|\/|.)+)/, '$1')
 
-    if (config.branchRegex) {
+    if (config && config.branchRegex) {
       branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1')
     }
 
@@ -56,19 +65,40 @@ function getEnvIdFromBranch () {
     }), '-')
   } catch (e) {
     console.log('ERR: ', e)
-        // Do nothing
   }
 }
 
+function useStaticFromConfig () {
+  var flowed = flow(
+        pick((config.environments || {}).static),
+        keys,
+        head
+    )(args)
+
+  return flowed
+}
+
+function useFileList () {
+  var argKeys = _.keys(args)
+  var options = fs.readdirSync('config')
+  return _.filter(options, function (entry) {
+    console.log('filter', entry)
+    return entry.endsWith('config.yml')
+  }).map(function (entry) {
+    console.log('map', entry)
+    return entry.substring(0, entry.length - '.config.yml'.length)
+  }).filter(function (entry) {
+    console.log('filter2', entry)
+    return argKeys.indexOf(entry) !== -1
+  })[0]
+}
+
 function getEnvId () {
-  return args.env ||
-        flow(
-            pick((config.environments || {}).static),
-            keys,
-            head
-        )(args) ||
-        process.env.ENVIRONMENT_ID ||
-        getEnvIdFromBranch()
+  console.log('args', args)
+  console.log('sfn', singleFileMode)
+  var templ = singleFileMode ? useStaticFromConfig() : useFileList()
+
+  return args.env || templ || process.env.ENVIRONMENT_ID || getEnvIdFromBranch()
 }
 
 function substitute (p) {
@@ -79,7 +109,10 @@ function substitute (p) {
     }
     return _.get(config, term) || match
   })
-  return {success: success, replace: replaced}
+  return {
+    success: success,
+    replace: replaced
+  }
 }
 
 function transform (obj) {
@@ -108,7 +141,10 @@ function transform (obj) {
     }
     return p
   })
-  return {changed: changed, result: resultant}
+  return {
+    changed: changed,
+    result: resultant
+  }
 }
 
 function log () {
@@ -133,15 +169,13 @@ function requireSettings (settings) {
   }
 }
 
-config = _.merge(
-    {},
+config = _.merge({},
     config || {},
-    config[environmentType] || {},
-  {
-    envId: envId,
-    ENVID: ENVID,
-    timestamp: timestamp
-  })
+    config[environmentType] || {}, {
+      envId: envId,
+      ENVID: ENVID,
+      timestamp: timestamp
+    })
 
 let altered = false
 do {
