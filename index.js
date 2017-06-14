@@ -11,7 +11,6 @@ const yaml = require('js-yaml')
 const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
-let singleFileMode = true
 let config = loadConfig()
 let environments = config.environments || {}
 let envId = getEnvId()
@@ -23,7 +22,6 @@ function loadConfig () {
     return loadConfigFile('config.yml')
   }
 
-  singleFileMode = false
   return _.merge(
     {},
     loadConfigFile('config/defaults.yml'),

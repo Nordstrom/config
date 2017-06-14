@@ -116,7 +116,7 @@ If you want to separate your environments by file
 * create a `config` folder in the root directory of your project
 * move the existing `config.yml` file to `config/defaults.yml`
 * create custom environments via `config/[env].yml`
-* use via the `--[env]` argument
+* use via the `--env [env]` argument
 
 ### Environment ID: ENVIRONMENT_ID
 Set the Environment ID using ENVIRONMENT_ID process environment variable.
