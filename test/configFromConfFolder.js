@@ -9,7 +9,7 @@ describe('Config (from file)', function () {
   let config
   const env = 'substitution'
 
-  describe('via --env=[env]', function(){
+  describe('via --env=[env]', function () {
     before(function () {
       sh.rm('config.yml')
       process.argv.push('--env')
