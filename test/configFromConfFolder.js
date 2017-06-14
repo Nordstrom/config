@@ -3,19 +3,17 @@
 require('should')
 const sh = require('shelljs')
 const _load = require('./_load.js')
-const oldConfig = require('../')
 
 // these run the same tests as substitution, just to verify that this approach doesnt change the functionality.
-describe('Config (Basic)', function () {
+describe('Config (from file)', function () {
   let config
   const env = 'substitution'
 
   before(function () {
     sh.rm('config.yml')
-    sh.mkdir('config')
-    process.argv.push('--' + env)
+    process.argv.push('--env')
+    process.argv.push(env)
     config = _load(env, true)
-    console.log(config)
   })
 
   it('should substitute at 1st level', function () {
@@ -46,7 +44,7 @@ describe('Config (Basic)', function () {
   })
 
   after(function () {
-    sh.rm('-rf', 'config')
-    sh.head(oldConfig + ' > config.yml')
+    process.argv.pop()
+    process.argv.pop()
   })
 })

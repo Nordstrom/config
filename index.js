@@ -12,25 +12,26 @@ const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
 let singleFileMode = true
-let config = determineConfigMode()
+let config = loadConfig()
 let environments = config.environments || {}
 let envId = getEnvId()
 let ENVID = envId ? envId.toUpperCase() : undefined
 let environmentType = (_.includes(environments.static, envId) ? envId : undefined) || environments.default
 
-function determineConfigMode () {
+function loadConfig () {
   if (fs.existsSync('config.yml')) {
-    return loadConfig('config.yml')
+    return loadConfigFile('config.yml')
   }
 
   singleFileMode = false
-  return _.merge({},
-        loadConfig('config/defaults.config.yml'),
-        loadConfig('config/' + getEnvId() + '.config.yml')
-    )
+  return _.merge(
+    {},
+    loadConfigFile('config/defaults.yml'),
+    loadConfigFile('config/' + getEnvId() + '.yml')
+  )
 }
 
-function loadConfig (file) {
+function loadConfigFile (file) {
   try {
     return yaml.load(fs.readFileSync(file, 'utf8'))
   } catch (e) {
@@ -77,22 +78,8 @@ function useStaticFromConfig () {
   return flowed
 }
 
-function useFileList () {
-  var argKeys = _.keys(args)
-  var options = fs.readdirSync('config')
-  return _.filter(options, function (entry) {
-    return entry.endsWith('config.yml')
-  }).map(function (entry) {
-    return entry.substring(0, entry.length - '.config.yml'.length)
-  }).filter(function (entry) {
-    return argKeys.indexOf(entry) !== -1
-  })[0]
-}
-
 function getEnvId () {
-  var templ = singleFileMode ? useStaticFromConfig() : useFileList()
-
-  return args.env || templ || process.env.ENVIRONMENT_ID || getEnvIdFromBranch()
+  return args.env || useStaticFromConfig() || process.env.ENVIRONMENT_ID || getEnvIdFromBranch()
 }
 
 function substitute (p) {
