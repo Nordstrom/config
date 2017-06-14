@@ -5,6 +5,7 @@ const sh = require('shelljs')
 const _load = require('./_load.js')
 const oldConfig = require('../')
 
+// these run the same tests as substitution, just to verify that this approach doesnt change the functionality.
 describe('Config (Basic)', function () {
   let config
   const env = 'substitution'

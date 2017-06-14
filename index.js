@@ -12,8 +12,7 @@ const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
 let singleFileMode = true
-let config = {}
-config = determineConfigMode()
+let config = determineConfigMode()
 let environments = config.environments || {}
 let envId = getEnvId()
 let ENVID = envId ? envId.toUpperCase() : undefined
@@ -82,20 +81,15 @@ function useFileList () {
   var argKeys = _.keys(args)
   var options = fs.readdirSync('config')
   return _.filter(options, function (entry) {
-    console.log('filter', entry)
     return entry.endsWith('config.yml')
   }).map(function (entry) {
-    console.log('map', entry)
     return entry.substring(0, entry.length - '.config.yml'.length)
   }).filter(function (entry) {
-    console.log('filter2', entry)
     return argKeys.indexOf(entry) !== -1
   })[0]
 }
 
 function getEnvId () {
-  console.log('args', args)
-  console.log('sfn', singleFileMode)
   var templ = singleFileMode ? useStaticFromConfig() : useFileList()
 
   return args.env || templ || process.env.ENVIRONMENT_ID || getEnvIdFromBranch()

@@ -111,6 +111,13 @@ For Static Environments set the Environment ID using the static environment id a
 gulp deploy --prod
 ```
 
+#### Config folder 
+If you want to separate your environments by file
+* create a `config` folder in the root directory of your project
+* move the existing `config.yml` file to `config/defaults.config.yml`
+* create custom environments via `config/[env].config.yml`
+* use via the `--[env]` argument
+
 ### Environment ID: ENVIRONMENT_ID
 Set the Environment ID using ENVIRONMENT_ID process environment variable.
 
