@@ -64,6 +64,24 @@ console.log(config.app.url);
 
 ```
 
+## Config Folder
+Instead of having a file named `config.yml` with all of your environment settings in place, you could have a `config` folder 
+at the root level of your project. This module will read in every `.yml` file, and return an object that looks like:
+```
+{
+    [file-name]: [parsed-file-contents],
+    ...,
+    ...,
+    environment: {
+      static: [
+        [file-name],
+        ...,
+        ...
+      ]
+    }    
+} 
+```
+
 ## Environment Specific Settings
 Based on an Environment ID, you can designate specific override settings for different types of environments.  First
 you have to specify your Environment ID.  You can do so in one of several ways.  The first Environment ID that is
