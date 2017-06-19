@@ -18,7 +18,8 @@ let config = loadConfig()
 let environments = config.environments || {}
 let envId = getEnvId(config)
 let ENVID = envId ? envId.toUpperCase() : undefined
-let environmentType = (_.includes(environments.static, envId) ? envId : (multiFile ? envId : undefined)) || environments.default
+let environmentTypes = environments.static || keys(config)
+let environmentType = _.includes(environmentTypes, envId) ? envId : environments.default
 config = swapVariables(config)
 
 function loadConfigFile (file) {
