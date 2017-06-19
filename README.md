@@ -71,15 +71,24 @@ at the root level of your project. This module will read in every `.yml` file, a
 {
     [file-name]: [parsed-file-contents],
     ...,
-    ...,
-    environment: {
-      static: [
-        [file-name],
-        ...,
-        ...
-      ]
-    }    
 } 
+```
+
+if you need to do cross-file referencing, you can, via dot-notation:
+```
+# file `a`
+foo: bar
+```
+```
+#file `b`
+baz: ${a.foo}
+```
+will get you
+```
+{
+    a: {foo: 'bar'},
+    b: {baz: 'bar'}
+}
 ```
 
 ## Environment Specific Settings

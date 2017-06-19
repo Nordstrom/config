@@ -18,7 +18,7 @@ let config = loadConfig()
 let environments = config.environments || {}
 let envId = getEnvId(config)
 let ENVID = envId ? envId.toUpperCase() : undefined
-let environmentType = (_.includes(environments.static, envId) ? envId : undefined) || environments.default
+let environmentType = (_.includes(environments.static, envId) ? envId : (multiFile ? envId : undefined)) || environments.default
 config = swapVariables(config)
 
 function loadConfigFile (file) {
@@ -36,14 +36,13 @@ function loadConfig () {
   if (fs.existsSync('config.yml')) {
     return loadConfigFile('config.yml')
   } else {
-    let templ = {environments: {static: []}}
+    let templ = {}
     multiFile = true
     let files = fs.readdirSync('config')
     for (let i = 0; i < files.length; i++) {
       if (files[i].endsWith('.yml')) {
         let keyName = files[i].substring(0, files[i].length - '.yml'.length)
         templ[keyName] = loadConfigFile('config/' + files[i])
-        templ.environments.static.push(keyName)
       }
     }
     return templ
@@ -78,7 +77,7 @@ function getEnvIdFromBranch () {
 function getEnvId (obj) {
   return args.env ||
         flow(
-            pick(((obj.environments || {}).static) || obj),
+            pick(keys(obj)),
             keys,
             head
         )(args) ||
@@ -159,22 +158,17 @@ function swapVariables (configFile) {
     return obj
   }
 
-  let file = _.merge(
+  let file = multiFile ? _.mapValues(configFile, readAndSwap) : configFile
+  file = _.merge(
     {},
-    configFile || {},
-    configFile[environmentType] || {},
+    file || {},
+    file[environmentType] || {},
     {
       envId: envId,
       ENVID: ENVID,
       timestamp: timestamp
     })
 
-  if (multiFile) {
-    for (let i = 0; i < configFile.environments.static.length; i++) {
-      let currentFile = configFile.environments.static[i]
-      file[currentFile] = readAndSwap(file[currentFile])
-    }
-  }
   file = readAndSwap(file)
   return file
 }
