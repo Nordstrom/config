@@ -32,3 +32,4 @@ sub4:
     foo: ${sub3.bar.foo}
 
 sub5: ${nonexistant.value}
+sub6: ${basic.var1}

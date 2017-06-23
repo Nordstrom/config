@@ -1,5 +1,7 @@
 'use strict'
 
+/* global require, module */
+
 const _ = require('lodash')
 const flow = require('lodash/fp/flow')
 const head = require('lodash/fp/head')
@@ -11,33 +13,46 @@ const yaml = require('js-yaml')
 const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
-
+let multiFile = false
 let config = loadConfig()
 let environments = config.environments || {}
-let envId = getEnvId()
+let envId = getEnvId(config)
 let ENVID = envId ? envId.toUpperCase() : undefined
-let environmentType = (_.includes(environments.static, envId) ? envId : undefined) || environments.default
+let environmentTypes = environments.static || keys(config)
+let environmentType = _.includes(environmentTypes, envId) ? envId : environments.default
+config = swapVariables(config)
 
-function loadConfig () {
+function loadConfigFile (file) {
   try {
-    return yaml.load(fs.readFileSync('config.yml', 'utf8'))
+    return yaml.load(fs.readFileSync(file, 'utf8'))
   } catch (e) {
     if (!/ENOENT:\s+no such file or directory/.test(e)) {
-      console.log('Error Loading config.yml:', e)
-      throw e
-    }
-    try {
-      return yaml.load(fs.readFileSync('../config.yml', 'utf8'))
-    } catch (e) {
-      console.log('Error Loading config.yml:', e)
+      console.log('Error Loading ' + file + ':', e)
       throw e
     }
   }
 }
 
+function loadConfig () {
+  if (fs.existsSync('config.yml')) {
+    return loadConfigFile('config.yml')
+  } else {
+    let templ = {}
+    multiFile = true
+    let files = fs.readdirSync('config')
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].endsWith('.yml')) {
+        let keyName = files[i].substring(0, files[i].length - '.yml'.length)
+        templ[keyName] = loadConfigFile('config/' + files[i])
+      }
+    }
+    return templ
+  }
+}
+
 function getEnvIdFromBranch () {
   try {
-    var branch = sh.exec('git status', { silent: true }).stdout
+    let branch = sh.exec('git status', { silent: true }).stdout
 
     if (!branch || _.includes(branch, 'fatal:')) {
       return
@@ -60,10 +75,10 @@ function getEnvIdFromBranch () {
   }
 }
 
-function getEnvId () {
+function getEnvId (obj) {
   return args.env ||
         flow(
-            pick((config.environments || {}).static),
+            pick(keys(obj)),
             keys,
             head
         )(args) ||
@@ -71,38 +86,38 @@ function getEnvId () {
         getEnvIdFromBranch()
 }
 
-function substitute (p) {
+function substitute (file, p) {
   let success = false
-  let replaced = p.replace(/\$\{([\w.-]+)}/g, function (match, term) {
+  let replaced = p.replace(/\${([\w.-]+)}/g, function (match, term) {
     if (!success) {
-      success = _.has(config, term)
+      success = _.has(file, term)
     }
-    return _.get(config, term) || match
+    return _.get(file, term) || match
   })
   return {success: success, replace: replaced}
 }
 
-function transform (obj) {
-  var changed = false
-  var resultant = _.mapValues(obj, function (p) {
+function transform (file, obj) {
+  let changed = false
+  let resultant = _.mapValues(obj, function (p) {
     if (_.isPlainObject(p)) {
-      var transformed = transform(p)
+      let transformed = transform(file, p)
       if (!changed && transformed.changed) {
         changed = true
       }
       return transformed.result
     }
     if (_.isString(p)) {
-      var subbed = substitute(p)
+      let subbed = substitute(file, p)
       if (!changed && subbed.success) {
         changed = true
       }
       return subbed.replace
     }
     if (_.isArray(p)) {
-      for (var i = 0; i < p.length; i++) {
+      for (let i = 0; i < p.length; i++) {
         if (_.isString(p[i])) {
-          p[i] = substitute(p[i]).replace
+          p[i] = substitute(file, p[i]).replace
         }
       }
     }
@@ -116,7 +131,7 @@ function log () {
 }
 
 function requireSettings (settings) {
-  var erredSettings = []
+  let erredSettings = []
   settings = _.isString(settings) ? [settings] : settings
   _.forEach(settings, function (setting) {
     if (!_.has(config, setting)) {
@@ -133,23 +148,31 @@ function requireSettings (settings) {
   }
 }
 
-config = _.merge(
+function swapVariables (configFile) {
+  function readAndSwap (obj) {
+    let altered = false
+    do {
+      let temp = transform(obj, obj)
+      obj = temp.result
+      altered = temp.changed
+    } while (altered)
+    return obj
+  }
+
+  let file = multiFile ? _.mapValues(configFile, readAndSwap) : configFile
+  file = _.merge(
     {},
-    config || {},
-    config[environmentType] || {},
-  {
-    envId: envId,
-    ENVID: ENVID,
-    timestamp: timestamp
-  })
+    file || {},
+    file[environmentType] || {},
+    {
+      envId: envId,
+      ENVID: ENVID,
+      timestamp: timestamp
+    })
 
-let altered = false
-do {
-  let temp = transform(config)
-  config = temp.result
-  altered = temp.changed
-} while (altered)
-
+  file = readAndSwap(file)
+  return file
+}
 module.exports = config
 module.exports.log = log
 module.exports.require = requireSettings

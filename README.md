@@ -64,6 +64,33 @@ console.log(config.app.url);
 
 ```
 
+## Config Folder
+Instead of having a file named `config.yml` with all of your environment settings in place, you could have a `config` folder 
+at the root level of your project. This module will read in every `.yml` file, and return an object that looks like:
+```javascript
+{
+    [file-name]: [parsed-file-contents],
+    ...,
+} 
+```
+
+if you need to do cross-file referencing, you can, via dot-notation:
+```yaml
+# file `a.yml`
+foo: bar
+```
+```yaml
+#file `b.yml`
+baz: ${a.foo}
+```
+will get you
+```javascript
+{
+    a: {foo: 'bar'},
+    b: {baz: 'bar'}
+}
+```
+
 ## Environment Specific Settings
 Based on an Environment ID, you can designate specific override settings for different types of environments.  First
 you have to specify your Environment ID.  You can do so in one of several ways.  The first Environment ID that is
@@ -90,6 +117,28 @@ environments:
 
 ```
 
+### Keys as environments
+The other approach you can take is to have top level keys that only consist of your environments. 
+
+#### Using a single config.yml file
+setup your config.yml as follows:
+```yaml
+dev:
+    # ...
+test:
+    # ...
+prod:
+    # ...
+```
+
+#### Using a Config folder.
+Your filenames determine the keys, so your directory could be set as follows:
+
+```
+config/dev.yml
+config/test.yml
+config/prod.yml
+```
 
 ### Environment ID: --env Argument
 Set the Environment ID using --env command line argument.
