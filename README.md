@@ -30,7 +30,7 @@ This config can be accessed like this.
 
 ```javascript
 
-var config = require('config-yml');
+const config = require('config-yml');
 
 console.log(config.app.url);
 console.log(config.app.cache);
@@ -140,6 +140,14 @@ config/test.yml
 config/prod.yml
 ```
 
+### Environment ID: load Argument
+Set the Environment ID using the load function.
+
+```js
+const config = require('config-yml').load('myenvironment')
+```
+
+
 ### Environment ID: --env Argument
 Set the Environment ID using --env command line argument.
 
@@ -199,7 +207,7 @@ db:
 This will yield the following:
 
 ```javascript
-var config = require('config-yml');
+const config = require('config-yml');
 
 console.log(config.dns);          // feature-xyz.myapp.com
 console.log(config.app.url);      // http://feature-xyz.myapp.com
@@ -234,7 +242,7 @@ and the following app.js file:
 
 
 ```javascript
-var config = require('config-yml');
+const config = require('config-yml');
 
 console.log(config.dns);
 console.log(config.app.url);
