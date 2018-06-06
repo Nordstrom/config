@@ -1,7 +1,3 @@
-'use strict'
-
-/* global require, module */
-
 const _ = require('lodash')
 const flow = require('lodash/fp/flow')
 const head = require('lodash/fp/head')
@@ -14,13 +10,23 @@ const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
 let multiFile = false
-let config = loadConfig()
-let environments = config.environments || {}
-let envId = getEnvId(config)
-let ENVID = envId ? envId.toUpperCase() : undefined
-let environmentTypes = environments.static || keys(config)
-let environmentType = _.includes(environmentTypes, envId) ? envId : environments.default
-config = swapVariables(config)
+let envId
+let ENVID
+let environmentType
+let environmentTypes
+let environments
+let config
+
+function load (env) {
+  config = loadConfig()
+  environments = config.environments || {}
+  envId = getEnvId(config, env)
+  ENVID = envId ? envId.toUpperCase() : undefined
+  environmentTypes = environments.static || keys(config)
+  environmentType = _.includes(environmentTypes, envId) ? envId : environments.default
+  config = swapVariables(config)
+  return config
+}
 
 function loadConfigFile (file) {
   try {
@@ -71,16 +77,17 @@ function getEnvIdFromBranch () {
     }), '-')
   } catch (e) {
     console.log('ERR: ', e)
-        // Do nothing
+    // Do nothing
   }
 }
 
-function getEnvId (obj) {
-  return args.env ||
+function getEnvId (obj, env) {
+  return env ||
+        args.env ||
         flow(
-            pick(keys(obj)),
-            keys,
-            head
+          pick(keys(obj)),
+          keys,
+          head
         )(args) ||
         process.env.ENVIRONMENT_ID ||
         getEnvIdFromBranch()
@@ -173,6 +180,7 @@ function swapVariables (configFile) {
   file = readAndSwap(file)
   return file
 }
-module.exports = config
+module.exports = load()
+module.exports.load = load
 module.exports.log = log
 module.exports.require = requireSettings
