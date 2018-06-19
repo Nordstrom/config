@@ -64,7 +64,7 @@ function getEnvIdFromBranch () {
       length: 13,
       omission: ''
     }), '-')
-    
+
     return branch
   } catch (e) {
     console.log('ERR: ', e)
