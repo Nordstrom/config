@@ -14,5 +14,8 @@ module.exports = function (regex) {
     omission: ''
   }) : undefined
 
-  return env
+  var hash = sh.exec('git rev-parse HEAD').stdout
+  hash = hash.substring(0, 5)
+
+  return (env.includes(' ')) ? hash : env
 }
