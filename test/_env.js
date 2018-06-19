@@ -9,5 +9,5 @@ module.exports = function (regex) {
   return env ? _.truncate(env, {
     length: 13,
     omission: ''
-  }) : undefined
+  }).replace(/(\r\n|\n|\r)/gm, '') : undefined
 }

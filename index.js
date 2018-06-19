@@ -63,7 +63,7 @@ function getEnvIdFromBranch () {
     return _.trimEnd(_.truncate(branch, {
       length: 13,
       omission: ''
-    }), '-')
+    }), '-').replace(/(\r\n|\n|\r)/gm, '')
   } catch (e) {
     console.log('ERR: ', e)
     // Do nothing
