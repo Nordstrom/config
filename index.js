@@ -58,7 +58,7 @@ function loadConfig () {
 
 function getEnvIdFromBranch () {
   try {
-    var branch = sh.exec('git status', { silent: true }).stdout
+    let branch = sh.exec('git status', { silent: true }).stdout
 
     if (!branch || _.includes(branch, 'fatal:')) {
       return
@@ -76,7 +76,7 @@ function getEnvIdFromBranch () {
       omission: ''
     }), '-')
 
-    var hash = sh.exec('git rev-parse HEAD').stdout
+    let hash = sh.exec('git rev-parse HEAD').stdout
     hash = hash.substring(0, 5)
 
     return (branch.includes(' ')) ? hash : branch
