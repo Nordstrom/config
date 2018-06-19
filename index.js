@@ -76,7 +76,7 @@ function getEnvIdFromBranch () {
       omission: ''
     }), '-')
 
-    var hash = sh.exec('git rev-parse origin/master', { silent: true }).stdout
+    var hash = sh.exec('git rev-parse HEAD').stdout
     hash = hash.substring(0, 5)
 
     return (branch.includes(' ')) ? hash : branch
