@@ -56,29 +56,35 @@ function loadConfig () {
   }
 }
 
-function getEnvIdFromBranch () {
-  try {
-    let branch = sh.exec('git status', { silent: true }).stdout
+function getEnvIdFromBranch() {
+    try {
+        var branch = sh.exec('git status', { silent: true }).stdout;
 
-    if (!branch || _.includes(branch, 'fatal:')) {
-      return
+        if (!branch || _.includes(branch, 'fatal:')) {
+            return;
+        }
+
+        branch = branch.split('\n')[0];
+        branch = branch.replace(/^#?\s?On branch ((\w|-|_|\/|.)+)/, '$1');
+
+        if (config.branchRegex) {
+            branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1');
+        }
+
+        branch = _.trimEnd(_.truncate(branch, {
+            length: 13,
+            omission: ''
+        }), '-');
+
+        var hash = sh.exec('git rev-parse origin/master', { silent: true }).stdout;
+        hash = hash.substring(0, 5);
+
+        return (branch.includes(' ')) ? hash : branch;
     }
-
-    branch = branch.split('\n')[0]
-    branch = branch.replace(/^#?\s?On branch ((\w|-|_|\/|.)+)/, '$1')
-
-    if (config.branchRegex) {
-      branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1')
+    catch (e) {
+        console.log('ERR: ', e);
+        // Do nothing
     }
-
-    return _.trimEnd(_.truncate(branch, {
-      length: 13,
-      omission: ''
-    }), '-')
-  } catch (e) {
-    console.log('ERR: ', e)
-    // Do nothing
-  }
 }
 
 function getEnvId (obj, env) {
