@@ -58,18 +58,7 @@ function loadConfig () {
 
 function getEnvIdFromBranch () {
   try {
-    let branch = sh.exec('git status', { silent: true }).stdout
-
-    if (!branch || _.includes(branch, 'fatal:')) {
-      return
-    }
-
-    branch = branch.split('\n')[0]
-    branch = branch.replace(/^#?\s?On branch ((\w|-|_|\/|.)+)/, '$1')
-
-    if (config.branchRegex) {
-      branch = branch.replace(new RegExp(_.trim(config.branchRegex)), '$1')
-    }
+    let branch = sh.exec('git name-rev HEAD --name-only').stdout
 
     return _.trimEnd(_.truncate(branch, {
       length: 13,
