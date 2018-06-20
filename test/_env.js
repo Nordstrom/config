@@ -6,9 +6,7 @@ const sh = require('shelljs')
 module.exports = function (regex) {
   var env = sh.exec('git name-rev HEAD --name-only').stdout
 
-  env = env.split('/')
-
-  env = env[env.length - 1]
+  env = _.last(_.split(env, '/'))
 
   return env ? _.truncate(env, {
     length: 13,
