@@ -60,6 +60,10 @@ function getEnvIdFromBranch () {
   try {
     let branch = sh.exec('git name-rev HEAD --name-only').stdout
 
+    branch = branch.split('/')
+
+    branch = branch[branch.length - 1]
+
     return _.trimEnd(_.truncate(branch, {
       length: 13,
       omission: ''
