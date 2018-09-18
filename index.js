@@ -58,7 +58,6 @@ function loadConfig () {
     }
   }
   return templ
-
 }
 
 function getEnvIdFromBranch () {
