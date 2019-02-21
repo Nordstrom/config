@@ -58,7 +58,7 @@ function loadConfig () {
 
 function getEnvIdFromBranch () {
   try {
-    let branch = sh.exec('git name-rev HEAD --name-only').stdout
+    let branch = sh.exec('git name-rev HEAD --name-only', {silent: true}).stdout
 
     branch = _.last(_.split(branch, '/'))
 
