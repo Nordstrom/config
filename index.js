@@ -9,6 +9,7 @@ const yaml = require('js-yaml')
 const moment = require('moment')
 const args = require('yargs').argv
 const timestamp = moment().format('YYYYMMDDHHmmss')
+const defaultFile = 'config.yml'
 let multiFile = false
 let envId
 let ENVID
@@ -17,8 +18,8 @@ let environmentTypes
 let environments
 let config
 
-function load (env) {
-  config = loadConfig()
+function load (env, file = defaultFile) {
+  config = loadConfig(file)
   environments = config.environments || {}
   envId = getEnvId(config, env)
   ENVID = envId ? envId.toUpperCase() : undefined
@@ -26,6 +27,10 @@ function load (env) {
   environmentType = _.includes(environmentTypes, envId) ? envId : environments.default
   config = swapVariables(config)
   return config
+}
+
+function loadFromFile (file, env = undefined) {
+  return load(env, file)
 }
 
 function loadConfigFile (file) {
@@ -39,9 +44,9 @@ function loadConfigFile (file) {
   }
 }
 
-function loadConfig () {
-  if (fs.existsSync('config.yml')) {
-    return loadConfigFile('config.yml')
+function loadConfig (file) {
+  if (fs.existsSync(file)) {
+    return loadConfigFile(file)
   } else {
     let templ = {}
     multiFile = true
@@ -174,4 +179,5 @@ function swapVariables (configFile) {
 module.exports = load()
 module.exports.load = load
 module.exports.log = log
+module.exports.loadFromFile = loadFromFile
 module.exports.require = requireSettings
