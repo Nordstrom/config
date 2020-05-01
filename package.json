@@ -6,7 +6,9 @@
   "scripts": {
     "test": "standard | snazzy && mocha",
     "coverage": "nyc --reporter=lcov --reporter=text mocha",
-    "coveralls": "nyc --reporter=text-lcov mocha | coveralls"
+    "coveralls": "nyc --reporter=text-lcov mocha | coveralls",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -42,7 +44,8 @@
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "shelljs": "^0.7.0",
-    "yargs": "^4.7.1"
+    "yargs": "^4.7.1",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "coveralls": "^3.0.1",
@@ -53,5 +56,6 @@
     "sinon": "^1.17.4",
     "snazzy": "^7.0.0",
     "standard": "^11.0.1"
-  }
+  },
+  "snyk": true
 }
