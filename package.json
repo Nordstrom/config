@@ -38,20 +38,20 @@
     ]
   },
   "dependencies": {
-    "js-yaml": "^3.6.1",
-    "lodash": "^4.13.1",
-    "moment": "^2.13.0",
-    "shelljs": "^0.7.0",
-    "yargs": "^4.7.1"
+    "js-yaml": "3.14.0",
+    "lodash": "4.17.20",
+    "moment": "2.29.1",
+    "shelljs": "0.8.4",
+    "yargs": "16.1.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.1",
-    "decache": "^3.1.0",
-    "mocha": "^5.2.0",
-    "nyc": "^12.0.2",
-    "should": "^9.0.2",
-    "sinon": "^1.17.4",
-    "snazzy": "^7.0.0",
-    "standard": "^11.0.1"
+    "coveralls": "3.1.0",
+    "decache": "4.6.0",
+    "mocha": "8.2.1",
+    "nyc": "15.1.0",
+    "should": "13.2.3",
+    "sinon": "9.2.1",
+    "snazzy": "7.1.1",
+    "standard": "16.0.1"
   }
 }

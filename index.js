@@ -43,12 +43,12 @@ function loadConfig () {
   if (fs.existsSync('config.yml')) {
     return loadConfigFile('config.yml')
   } else {
-    let templ = {}
+    const templ = {}
     multiFile = true
-    let files = fs.readdirSync('config')
+    const files = fs.readdirSync('config')
     for (let i = 0; i < files.length; i++) {
       if (files[i].endsWith('.yml')) {
-        let keyName = files[i].substring(0, files[i].length - '.yml'.length)
+        const keyName = files[i].substring(0, files[i].length - '.yml'.length)
         templ[keyName] = loadConfigFile('config/' + files[i])
       }
     }
@@ -58,7 +58,7 @@ function loadConfig () {
 
 function getEnvIdFromBranch () {
   try {
-    let branch = sh.exec('git name-rev HEAD --name-only', {silent: true}).stdout
+    let branch = sh.exec('git name-rev HEAD --name-only', { silent: true }).stdout
 
     branch = _.last(_.split(branch, '/'))
 
@@ -86,27 +86,27 @@ function getEnvId (obj, env) {
 
 function substitute (file, p) {
   let success = false
-  let replaced = p.replace(/\${([\w.-]+)}/g, function (match, term) {
+  const replaced = p.replace(/\${([\w.-]+)}/g, function (match, term) {
     if (!success) {
       success = _.has(file, term)
     }
     return _.get(file, term) || match
   })
-  return {success: success, replace: replaced}
+  return { success: success, replace: replaced }
 }
 
 function transform (file, obj) {
   let changed = false
-  let resultant = _.mapValues(obj, function (p) {
+  const resultant = _.mapValues(obj, function (p) {
     if (_.isPlainObject(p)) {
-      let transformed = transform(file, p)
+      const transformed = transform(file, p)
       if (!changed && transformed.changed) {
         changed = true
       }
       return transformed.result
     }
     if (_.isString(p)) {
-      let subbed = substitute(file, p)
+      const subbed = substitute(file, p)
       if (!changed && subbed.success) {
         changed = true
       }
@@ -121,7 +121,7 @@ function transform (file, obj) {
     }
     return p
   })
-  return {changed: changed, result: resultant}
+  return { changed: changed, result: resultant }
 }
 
 function log () {
@@ -129,7 +129,7 @@ function log () {
 }
 
 function requireSettings (settings) {
-  let erredSettings = []
+  const erredSettings = []
   settings = _.isString(settings) ? [settings] : settings
   _.forEach(settings, function (setting) {
     if (!_.has(config, setting)) {
@@ -150,7 +150,7 @@ function swapVariables (configFile) {
   function readAndSwap (obj) {
     let altered = false
     do {
-      let temp = transform(obj, obj)
+      const temp = transform(obj, obj)
       obj = temp.result
       altered = temp.changed
     } while (altered)

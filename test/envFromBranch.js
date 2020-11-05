@@ -7,7 +7,7 @@ const _env = require('./_env.js')
 const _load = require('./_load.js')
 
 describe('Config env from branch', function () {
-  var config,
+  let config,
     env,
     clock,
     timestamp

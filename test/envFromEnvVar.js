@@ -4,7 +4,7 @@ require('should')
 const _load = require('./_load.js')
 
 describe('Config env from env var', function () {
-  var config, env
+  let config, env
 
   before(function () {
     env = 'envvar'

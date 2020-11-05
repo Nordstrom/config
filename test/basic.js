@@ -4,7 +4,7 @@ require('should')
 const _load = require('./_load.js')
 
 describe('Config (Basic)', function () {
-  var config
+  let config
 
   before(function () {
     config = _load('basic')
