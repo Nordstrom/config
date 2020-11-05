@@ -6,7 +6,7 @@ const _env = require('./_env.js')
 const _load = require('./_load.js')
 
 describe('Config env from branch with regex', function () {
-  var config, env, clock
+  let config, env, clock
 
   before(function () {
     clock = sinon.useFakeTimers()
